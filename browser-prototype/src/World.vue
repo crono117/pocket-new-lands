@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { useLoop } from '@tresjs/core'
 import * as T from 'three'
-import { screenMotion, directionRow, allowedPosition, canTravel, frameColumn } from './simulation.js'
+import { acceptsGameplayKey, screenMotion, directionRow, allowedPosition, canTravel, frameColumn } from './simulation.js'
 const props = defineProps(['state', 'move'])
 const root = new T.Group(), home = new T.Group(), ash = new T.Group()
 root.add(home, ash); ash.visible = false
@@ -78,7 +78,7 @@ function allowed(x,z){return allowedPosition(x,z,props.state.realm,colliders)}
 function travel(){if(props.state.paused){props.state.status='Resume time before crossing the gate.';return}const p=portals[props.state.realm==='hearth'?0:1];if(!canTravel(player.x,player.z,p)){props.state.status='Walk closer to the glowing gate first.';return}props.state.realm=props.state.realm==='hearth'?'ash':'hearth';home.visible=props.state.realm==='hearth';ash.visible=!home.visible;home.remove(player.sprite,player.shadow);(home.visible?home:ash).add(player.sprite,player.shadow);player.x=home.visible?2.2:-2.3;player.z=home.visible?-1:3;target=null;props.state.status=home.visible?'You returned safely to the Hearth.':'The gate opens onto a ruined observatory. Explore, then return through the cyan gate.'}
 function reset(){player.x=props.state.realm==='hearth'?0:-2.3;player.z=props.state.realm==='hearth'?2:3;target=null;keys.clear();props.move.x=props.move.y=0}
 defineExpose({travel,reset})
-function keydown(e){if(['INPUT','BUTTON'].includes(e.target.tagName))return;const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(e.repeat&&[' ','e'].includes(k))return;keys.add(k);if(k==='e')travel();if(k===' ')props.state.paused=!props.state.paused}
+function keydown(e){const k=e.key.toLowerCase();if(!acceptsGameplayKey(e.target.tagName,k))return;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(e.repeat&&[' ','e'].includes(k))return;keys.add(k);if(k==='e')travel();if(k===' ')props.state.paused=!props.state.paused}
 function keyup(e){keys.delete(e.key.toLowerCase())}
 function blur(){keys.clear();props.move.x=props.move.y=0}
 function pointer(e){if(e.target.tagName!=='CANVAS')return;const bounds=e.target.getBoundingClientRect();ray.setFromCamera(new T.Vector2((e.clientX-bounds.left)/bounds.width*2-1,-(e.clientY-bounds.top)/bounds.height*2+1),camera);const hit=new T.Vector3();if(ray.ray.intersectPlane(groundPlane,hit)&&allowed(hit.x,hit.z))target=new T.Vector2(hit.x,hit.z)}
