@@ -1,3 +1,6 @@
 .godot/
 *.tmp
 *.zip
+browser-prototype/node_modules/
+browser-prototype/dist/
+browser-prototype/public/sprites/

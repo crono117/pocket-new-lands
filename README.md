@@ -41,3 +41,14 @@ godot --headless --path . res://scenes/sprite_preview.tscn --quit-after 120
 ```
 
 These directional assets are integrated in the animation lab; the main management cards retain their original static portrait atlas. Combat actors should use `DirectionalSprite` when that scene is built.
+
+## Isometric browser exploration prototype
+A Vue/TresJS/Three.js companion lives in `browser-prototype/`. It uses flat animated characters inside an angled 3D sanctuary, screen-relative movement, wandering residents, ambient effects and a portal to a second explorable scene.
+
+```sh
+cd browser-prototype
+npm ci
+npm run dev
+```
+
+Read its README for controls, tests and the explicit visual-QA limitation. This is a separate exploration prototype; Godot remains the main game project.
