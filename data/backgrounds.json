@@ -1,0 +1,50 @@
+[
+  {
+    "id": "gardener",
+    "title": "Relic gardener",
+    "interest": "cultivation",
+    "bonus": {
+      "vitality": 2,
+      "craft": 2
+    },
+    "lore": "Tended a garden beneath a dying artificial sun. Their seed case still hums."
+  },
+  {
+    "id": "medic",
+    "title": "Battlefield healer",
+    "interest": "medicine",
+    "bonus": {
+      "resonance": 3
+    },
+    "lore": "Kept strangers alive through the collapse of the Ninth Meridian."
+  },
+  {
+    "id": "salvager",
+    "title": "Chronal salvager",
+    "interest": "engineering",
+    "bonus": {
+      "craft": 3
+    },
+    "lore": "Recovered machines from a city whose tomorrow never arrived."
+  },
+  {
+    "id": "warden",
+    "title": "Exiled warden",
+    "interest": "protection",
+    "bonus": {
+      "force": 2,
+      "vitality": 2
+    },
+    "lore": "Abandoned a fortress rather than obey an order to seal its refugee gates."
+  },
+  {
+    "id": "cartographer",
+    "title": "Fractal cartographer",
+    "interest": "exploration",
+    "bonus": {
+      "agility": 2,
+      "resonance": 2
+    },
+    "lore": "Mapped routes between incompatible histories and lost the way home."
+  }
+]

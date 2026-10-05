@@ -1,0 +1,98 @@
+[
+  {
+    "id": "robot",
+    "name": "Robot",
+    "base": {
+      "vitality": 12,
+      "force": 7,
+      "resonance": 4,
+      "craft": 9,
+      "agility": 6
+    },
+    "sprite_index": 0
+  },
+  {
+    "id": "cyborg",
+    "name": "Cyborg",
+    "base": {
+      "vitality": 10,
+      "force": 9,
+      "resonance": 6,
+      "craft": 8,
+      "agility": 7
+    },
+    "sprite_index": 1
+  },
+  {
+    "id": "ethereal",
+    "name": "Ethereal",
+    "base": {
+      "vitality": 6,
+      "force": 7,
+      "resonance": 13,
+      "craft": 6,
+      "agility": 10
+    },
+    "sprite_index": 2
+  },
+  {
+    "id": "plasma",
+    "name": "Plasma",
+    "base": {
+      "vitality": 8,
+      "force": 12,
+      "resonance": 10,
+      "craft": 4,
+      "agility": 7
+    },
+    "sprite_index": 3
+  },
+  {
+    "id": "reptilian",
+    "name": "Reptilian",
+    "base": {
+      "vitality": 11,
+      "force": 10,
+      "resonance": 5,
+      "craft": 7,
+      "agility": 8
+    },
+    "sprite_index": 4
+  },
+  {
+    "id": "archangel",
+    "name": "Archangel",
+    "base": {
+      "vitality": 10,
+      "force": 8,
+      "resonance": 12,
+      "craft": 5,
+      "agility": 8
+    },
+    "sprite_index": 5
+  },
+  {
+    "id": "anunnaki",
+    "name": "Anunnaki",
+    "base": {
+      "vitality": 9,
+      "force": 7,
+      "resonance": 11,
+      "craft": 12,
+      "agility": 5
+    },
+    "sprite_index": 6
+  },
+  {
+    "id": "pilgrim",
+    "name": "Void Pilgrim",
+    "base": {
+      "vitality": 8,
+      "force": 8,
+      "resonance": 8,
+      "craft": 8,
+      "agility": 8
+    },
+    "sprite_index": 7
+  }
+]
