@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, watch } from 'vue'
 import { useLoop } from '@tresjs/core'
 import * as T from 'three'
 import { createWizardsRetreat, RETREAT } from './wizards-retreat.js'
+import { createMarbleFloor } from './marble-floor.js'
 import { acceptsGameplayKey, screenMotion, directionRow, allowedPosition, canTravel, frameColumn } from './simulation.js'
 const props = defineProps(['state', 'move'])
 const root = new T.Group(), home = new T.Group(), ash = new T.Group()
@@ -23,6 +24,7 @@ function platform(group,dark=false){
  cylinder(group,0,-1.3,0,7.4,1.9,dark?'#242a3c':'#353f48',8)
  cylinder(group,0,-2.5,0,5.9,.8,dark?'#171c2b':'#222b36',8)
  cylinder(group,0,-.4,0,7.65,.14,'#8c7050',8)
+ if(!dark){group.add(createMarbleFloor());return}
  for(let x=-6;x<=6;x++)for(let z=-6;z<=6;z++)if(Math.abs(x)+Math.abs(z)<10){
   box(group,x,-.17,z,.98,.3,.98,dark?(x*z%3?'#414754':'#4b505d'):((x+z)%3?'#667078':'#777e80'))
  }
@@ -118,7 +120,7 @@ useLoop().onBeforeRender(({delta,elapsed,sizes})=>{
  }
  const gate=portals[props.state.realm==='hearth'?0:1];const nearby=canTravel(player.x,player.z,gate)
  const nearRetreat=props.state.realm==='hearth' && Math.hypot(player.x-RETREAT.x,player.z-(RETREAT.z+RETREAT.d/2))<1.6
- const status=nearRetreat?'The wizard’s retreat smells of warm cedar and rain. An old mirror holds a borrowed twilight.':nearby?'The gate answers your presence. Press E to cross.':props.state.realm==='hearth'?'Walk among the residents, then approach the violet gate.':'Explore the ruins. The cyan gate leads home.'
+ const status=nearRetreat?'Copper scales whisper above the crooked hermitage. Sea-glass lanterns guard a mirror that remembers another sky.':nearby?'The gate answers your presence. Press E to cross.':props.state.realm==='hearth'?'Walk among the residents, then approach the violet gate.':'Explore the ruins. The cyan gate leads home.'
  if(status!==lastStatus){props.state.status=status;lastStatus=status}
 })
 </script>
