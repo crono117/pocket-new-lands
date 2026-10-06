@@ -1,7 +1,10 @@
 import * as T from 'three'
 
 // Original refuge inspired by the mood of Wolfe's Jungle Garden, not a literal book reconstruction.
-export const RETREAT = Object.freeze({ x: 0, z: 4.4, w: 2.7, d: 2.3 })
+// Keep the front step inside the island (|z| <= 6) with room to walk around it.
+const STOOP_LOCAL_Z = 1.84
+export const RETREAT = Object.freeze({ x: 0, z: 3.35, w: 2.7, d: 2.3 })
+export const STOOP = Object.freeze({ x: RETREAT.x, z: RETREAT.z + STOOP_LOCAL_Z })
 
 export function createWizardsRetreat() {
  const group = new T.Group(); group.name = 'WizardsRetreat'; group.position.set(RETREAT.x, 0, RETREAT.z)
@@ -39,7 +42,7 @@ export function createWizardsRetreat() {
   for(const side of [-1,1]){const shutter=block(x+side*.33,1.15,1.115,.14,.57,.05,'#4f7068');shutter.rotation.y=side*.28}
  }
  windowAt(-.84);windowAt(.84)
- block(0,.12,1.42,1.1,.22,.7,'#97917c');block(0,.05,1.84,1.3,.1,.32,'#85857a')
+ block(0,.12,1.42,1.1,.22,.7,'#97917c');block(0,.05,STOOP_LOCAL_Z,1.3,.1,.32,'#85857a')
  // Old technology tucked into ordinary domestic objects.
  const mirror=new T.Mesh(new T.CircleGeometry(.25,24),new T.MeshStandardMaterial({color:'#8ad5d5',emissive:'#75a2d4',emissiveIntensity:.55,metalness:.65,roughness:.2}));mirror.rotation.y=Math.PI/2;mirror.position.set(1.32,1.22,.18);group.add(mirror)
  const mirrorFrame=new T.Mesh(new T.TorusGeometry(.28,.025,6,24),material('#af956e'));mirrorFrame.rotation.y=Math.PI/2;mirrorFrame.position.copy(mirror.position);group.add(mirrorFrame)

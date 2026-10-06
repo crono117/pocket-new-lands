@@ -2,8 +2,8 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { useLoop } from '@tresjs/core'
 import * as T from 'three'
-import { createWizardsRetreat, RETREAT } from './wizards-retreat.js'
-import { acceptsGameplayKey, screenMotion, directionRow, allowedPosition, canTravel, frameColumn } from './simulation.js'
+import { createWizardsRetreat, RETREAT, STOOP } from './wizards-retreat.js'
+import { acceptsGameplayKey, screenMotion, directionRow, allowedPosition, canTravel, frameColumn, explorationStatus, RETURN_NOTE, ARRIVAL_NOTE } from './simulation.js'
 const props = defineProps(['state', 'move'])
 const root = new T.Group(), home = new T.Group(), ash = new T.Group()
 root.add(home, ash); ash.visible = false
@@ -12,7 +12,7 @@ camera.position.set(18,22,18); camera.lookAt(-1.5,0,1.5)
 const ambient = new T.AmbientLight('#a6c4ef',2.1), sun = new T.DirectionalLight('#ffdcaa',3)
 sun.position.set(-4,12,6); root.add(ambient,sun)
 const materials = new Map(), actors = [], colliders = [], keys = new Set()
-let target=null, clock=0, lastStatus='', active=true
+let target=null, clock=0, lastStatus='', travelNote='', travelAt=-1, active=true
 const forward = new T.Vector3(-1,0,-1).normalize(), right = new T.Vector3(1,0,-1).normalize()
 const textureLoader = new T.TextureLoader(), ray = new T.Raycaster(), groundPlane = new T.Plane(new T.Vector3(0,1,0),0)
 const portals = []
@@ -78,7 +78,7 @@ function actor(id,x,z,controlled=false){
 const player=actor('robot',0,2,true)
 actor('cyborg',-2,1);actor('ethereal',2,0);actor('plasma',3,2);actor('reptilian',-3,3);actor('archangel',0,-1);actor('anunnaki',1,3);actor('pilgrim',2,4.5)
 function allowed(x,z){return allowedPosition(x,z,props.state.realm,colliders)}
-function travel(){if(props.state.paused){props.state.status='Resume time before crossing the gate.';return}const p=portals[props.state.realm==='hearth'?0:1];if(!canTravel(player.x,player.z,p)){props.state.status='Walk closer to the glowing gate first.';return}props.state.realm=props.state.realm==='hearth'?'ash':'hearth';home.visible=props.state.realm==='hearth';ash.visible=!home.visible;home.remove(player.sprite,player.shadow);(home.visible?home:ash).add(player.sprite,player.shadow);player.x=home.visible?2.2:-2.3;player.z=home.visible?-1:3;target=null;props.state.status=home.visible?'You returned safely to the Hearth.':'The gate opens onto a ruined observatory. Explore, then return through the cyan gate.'}
+function travel(){if(props.state.paused){props.state.status='Resume time before crossing the gate.';return}const p=portals[props.state.realm==='hearth'?0:1];if(!canTravel(player.x,player.z,p)){props.state.status='Walk closer to the glowing gate first.';return}props.state.realm=props.state.realm==='hearth'?'ash':'hearth';home.visible=props.state.realm==='hearth';ash.visible=!home.visible;home.remove(player.sprite,player.shadow);(home.visible?home:ash).add(player.sprite,player.shadow);player.x=home.visible?2.2:-2.3;player.z=home.visible?-1:3;target=null;travelNote=home.visible?RETURN_NOTE:ARRIVAL_NOTE;travelAt=clock;props.state.status=travelNote;lastStatus=travelNote}
 function reset(){player.x=props.state.realm==='hearth'?0:-2.3;player.z=props.state.realm==='hearth'?2:3;target=null;keys.clear();props.move.x=props.move.y=0}
 defineExpose({travel,reset})
 function keydown(e){const k=e.key.toLowerCase();if(!acceptsGameplayKey(e.target.tagName,k))return;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(e.repeat&&[' ','e'].includes(k))return;keys.add(k);if(k==='e')travel();if(k===' ')props.state.paused=!props.state.paused}
@@ -117,8 +117,10 @@ useLoop().onBeforeRender(({delta,elapsed,sizes})=>{
   a.sprite.position.set(a.x,.05,a.z);const pulse=props.state.effects?Math.sin(clock*1.65+actors.indexOf(a))*.012:0;a.sprite.scale.set(1.65*(1-pulse*.4),1.65*(1+pulse),1);a.shadow.position.set(a.x,.014,a.z);effects(a,dt)
  }
  const gate=portals[props.state.realm==='hearth'?0:1];const nearby=canTravel(player.x,player.z,gate)
- const nearRetreat=props.state.realm==='hearth' && Math.hypot(player.x-RETREAT.x,player.z-(RETREAT.z+RETREAT.d/2))<1.6
- const status=nearRetreat?'The wizard’s retreat smells of warm cedar and rain. An old mirror holds a borrowed twilight.':nearby?'The gate answers your presence. Press E to cross.':props.state.realm==='hearth'?'Walk among the residents, then approach the violet gate.':'Explore the ruins. The cyan gate leads home.'
+ const nearRetreat=props.state.realm==='hearth' && Math.hypot(player.x-STOOP.x,player.z-STOOP.z)<1.6
+ const travelAge=travelAt<0?Infinity:clock-travelAt
+ const status=explorationStatus({realm:props.state.realm,nearRetreat,nearby,travelNote,travelAge})
+ if(travelNote&&status!==travelNote)travelNote=''
  if(status!==lastStatus){props.state.status=status;lastStatus=status}
 })
 </script>
