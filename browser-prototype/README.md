@@ -29,3 +29,13 @@ Browser play on the Cloud Agent desktop confirmed the angled orthographic sanctu
 No combat, recruitment shop, save/load or base editing is implemented in this browser slice. Those systems remain in the Godot scaffold. The scene uses procedural 3D blockout geometry, not final environment art. Character walk sources retain the documented prototype limitations, including the cyborg, Anunnaki, and pilgrim frame substitutions. Camera rotation and eight-direction sheets remain future work. Ruin pillars and rubble are scenery and do not block movement. A browser compositor may log WebGL `ReadPixels` stalls; those are not failed sprite requests or uncaught exceptions.
 
 `npm run dev` / `npm run build` copy original PNGs from `../assets/characters/walk/` into ignored `public/sprites/`; no duplicate sprites are committed. No tokens or authentication are needed to play.
+
+## Wizard's retreat
+The sanctuary now includes an original retreat inspired by the secluded, time-haunted mood of the Jungle Garden hut in *The Shadow of the Torturer*. It is a creative interpretation, not a claim to reproduce the book's architecture.
+
+The 3D cottage sits at world position (0, 4.4), with a stone footing, timber facade, gabled slate roof, warm arched windows, shutters, trailing vines, a tall palm, herb pots, reading desk and a faintly pulsing mirror. Walk around the cabin to its front stoop to reveal a short journal observation. The hut has a movement collider; the pilgrim's initial position has moved outside its footprint. The interior is not enterable in this slice.
+
+The hut's structural construction, current simulation tests and production build were checked. The prior Cloud Agent playtest applies to the earlier sanctuary, not this new geometry: visually inspect roof/leaf silhouettes, sprite occlusion, cabin collision and access to its stoop on this branch.
+
+### Retreat and marble redesign
+The retreat now uses round plum masonry, a crooked bell roof of oxidized copper scales, a crescent finial, sea-glass talismans, fungi, vines and an alchemist table. The sanctuary has a continuous procedural marble atlas: spatially correlated age controls dust, faded cracks and surface roughness. Veins share world-space coordinates across grout. Ash Meridian retains its ruin floor. Run the cloud preview to review the new silhouette, tile transitions and walking clearance; interior entry is still unavailable.

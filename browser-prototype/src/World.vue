@@ -2,6 +2,8 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { useLoop } from '@tresjs/core'
 import * as T from 'three'
+import { createWizardsRetreat, RETREAT } from './wizards-retreat.js'
+import { createMarbleFloor } from './marble-floor.js'
 import { acceptsGameplayKey, screenMotion, directionRow, allowedPosition, canTravel, frameColumn } from './simulation.js'
 const props = defineProps(['state', 'move'])
 const root = new T.Group(), home = new T.Group(), ash = new T.Group()
@@ -22,11 +24,14 @@ function platform(group,dark=false){
  cylinder(group,0,-1.3,0,7.4,1.9,dark?'#242a3c':'#353f48',8)
  cylinder(group,0,-2.5,0,5.9,.8,dark?'#171c2b':'#222b36',8)
  cylinder(group,0,-.4,0,7.65,.14,'#8c7050',8)
+ if(!dark){group.add(createMarbleFloor());return}
  for(let x=-6;x<=6;x++)for(let z=-6;z<=6;z++)if(Math.abs(x)+Math.abs(z)<10){
   box(group,x,-.17,z,.98,.3,.98,dark?(x*z%3?'#414754':'#4b505d'):((x+z)%3?'#667078':'#777e80'))
  }
 }
 platform(home);platform(ash,true)
+const retreat = createWizardsRetreat(); home.add(retreat)
+colliders.push(RETREAT)
 // The chapel is an open colonnade: clear sightlines through ancient sacred machinery.
 box(home,-1,.11,-3,4.8,.2,3.3,'#9b9586')
 box(home,-1,.29,-2.2,3.6,.15,.6,'#b0a78e')
@@ -73,7 +78,7 @@ function actor(id,x,z,controlled=false){
  const a={id,sprite,map,shadow,x,z,row:2,controlled,phase:random()*8,next:1+random()*3,dest:new T.Vector2(x,z),steam:[],arc:null,arcTimer:2+random()*5};actors.push(a);return a
 }
 const player=actor('robot',0,2,true)
-actor('cyborg',-2,1);actor('ethereal',2,0);actor('plasma',3,2);actor('reptilian',-3,3);actor('archangel',0,-1);actor('anunnaki',1,3);actor('pilgrim',-1,4)
+actor('cyborg',-2,1);actor('ethereal',2,0);actor('plasma',3,2);actor('reptilian',-3,3);actor('archangel',0,-1);actor('anunnaki',1,3);actor('pilgrim',2,4.5)
 function allowed(x,z){return allowedPosition(x,z,props.state.realm,colliders)}
 function travel(){if(props.state.paused){props.state.status='Resume time before crossing the gate.';return}const p=portals[props.state.realm==='hearth'?0:1];if(!canTravel(player.x,player.z,p)){props.state.status='Walk closer to the glowing gate first.';return}props.state.realm=props.state.realm==='hearth'?'ash':'hearth';home.visible=props.state.realm==='hearth';ash.visible=!home.visible;home.remove(player.sprite,player.shadow);(home.visible?home:ash).add(player.sprite,player.shadow);player.x=home.visible?2.2:-2.3;player.z=home.visible?-1:3;target=null;props.state.status=home.visible?'You returned safely to the Hearth.':'The gate opens onto a ruined observatory. Explore, then return through the cyan gate.'}
 function reset(){player.x=props.state.realm==='hearth'?0:-2.3;player.z=props.state.realm==='hearth'?2:3;target=null;keys.clear();props.move.x=props.move.y=0}
@@ -100,6 +105,7 @@ useLoop().onBeforeRender(({delta,elapsed,sizes})=>{
  const aspect=sizes.width.value/sizes.height.value;const half=10/props.state.zoom;camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;camera.updateProjectionMatrix()
  if(props.state.paused)return
  const dt=Math.min(delta,.05);clock+=dt
+ retreat.userData.animate(clock,props.state.effects)
  seed.rotation.y+=dt*.3;seed.position.y=1.55+Math.sin(clock*1.5)*.06;seedRing.rotation.y+=dt*.16
  portals.forEach(p=>{p.veil.material.opacity=.45+Math.sin(clock*2)*.12;p.ring.material.emissiveIntensity=props.state.effects?.2+Math.sin(clock*2)*.1:0})
  for(const a of actors){
@@ -113,7 +119,8 @@ useLoop().onBeforeRender(({delta,elapsed,sizes})=>{
   a.sprite.position.set(a.x,.05,a.z);const pulse=props.state.effects?Math.sin(clock*1.65+actors.indexOf(a))*.012:0;a.sprite.scale.set(1.65*(1-pulse*.4),1.65*(1+pulse),1);a.shadow.position.set(a.x,.014,a.z);effects(a,dt)
  }
  const gate=portals[props.state.realm==='hearth'?0:1];const nearby=canTravel(player.x,player.z,gate)
- const status=nearby?'The gate answers your presence. Press E to cross.':props.state.realm==='hearth'?'Walk among the residents, then approach the violet gate.':'Explore the ruins. The cyan gate leads home.'
+ const nearRetreat=props.state.realm==='hearth' && Math.hypot(player.x-RETREAT.x,player.z-(RETREAT.z+RETREAT.d/2))<1.6
+ const status=nearRetreat?'Copper scales whisper above the crooked hermitage. Sea-glass lanterns guard a mirror that remembers another sky.':nearby?'The gate answers your presence. Press E to cross.':props.state.realm==='hearth'?'Walk among the residents, then approach the violet gate.':'Explore the ruins. The cyan gate leads home.'
  if(status!==lastStatus){props.state.status=status;lastStatus=status}
 })
 </script>
